@@ -25,11 +25,11 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/panghalamit/go-ethereum/common"
+	"github.com/panghalamit/go-ethereum/common/hexutil"
+	"github.com/panghalamit/go-ethereum/core/vm"
+	"github.com/panghalamit/go-ethereum/crypto"
+	"github.com/panghalamit/go-ethereum/log"
 	duktape "gopkg.in/olebedev/go-duktape.v3"
 )
 

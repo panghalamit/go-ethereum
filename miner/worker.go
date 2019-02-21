@@ -25,15 +25,15 @@ import (
 	"time"
 
 	mapset "github.com/deckarep/golang-set"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/misc"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/panghalamit/go-ethereum/common"
+	"github.com/panghalamit/go-ethereum/consensus"
+	"github.com/panghalamit/go-ethereum/consensus/misc"
+	"github.com/panghalamit/go-ethereum/core"
+	"github.com/panghalamit/go-ethereum/core/state"
+	"github.com/panghalamit/go-ethereum/core/types"
+	"github.com/panghalamit/go-ethereum/event"
+	"github.com/panghalamit/go-ethereum/log"
+	"github.com/panghalamit/go-ethereum/params"
 )
 
 const (
@@ -458,7 +458,7 @@ func (w *worker) mainLoop() {
 				w.mu.RLock()
 				coinbase := w.coinbase
 				w.mu.RUnlock()
-
+				log.Info("TxLifeCycleTest:", "probable order", 1)
 				txs := make(map[common.Address]types.Transactions)
 				for _, tx := range ev.Txs {
 					acc, _ := types.Sender(w.current.signer, tx)
@@ -690,7 +690,7 @@ func (w *worker) updateSnapshot() {
 
 func (w *worker) commitTransaction(tx *types.Transaction, coinbase common.Address) ([]*types.Log, error) {
 	snap := w.current.state.Snapshot()
-
+	log.Info("TxLifeCycleTest: Ready to apply single transaction", "txHash", tx.Hash())
 	receipt, _, err := core.ApplyTransaction(w.config, w.chain, &coinbase, w.current.gasPool, w.current.state, w.current.header, tx, &w.current.header.GasUsed, *w.chain.GetVMConfig())
 	if err != nil {
 		w.current.state.RevertToSnapshot(snap)
@@ -698,7 +698,7 @@ func (w *worker) commitTransaction(tx *types.Transaction, coinbase common.Addres
 	}
 	w.current.txs = append(w.current.txs, tx)
 	w.current.receipts = append(w.current.receipts, receipt)
-
+	log.Info("TxLifeCycleTest: Applied transaction and added to worker's txs and receipts")
 	return receipt.Logs, nil
 }
 
@@ -760,7 +760,7 @@ func (w *worker) commitTransactions(txs *types.TransactionsByPriceAndNonce, coin
 		}
 		// Start executing the transaction
 		w.current.state.Prepare(tx.Hash(), common.Hash{}, w.current.tcount)
-
+		log.Info("TxLifeCycleTest: Preparing Tx", "TxHash", tx.Hash())
 		logs, err := w.commitTransaction(tx, coinbase)
 		switch err {
 		case core.ErrGasLimitReached:
@@ -929,12 +929,14 @@ func (w *worker) commitNewWork(interrupt *int32, noempty bool, timestamp int64) 
 	}
 	if len(localTxs) > 0 {
 		txs := types.NewTransactionsByPriceAndNonce(w.current.signer, localTxs)
+		log.Info("TxLifeCycleTest: Committing Local transactions")
 		if w.commitTransactions(txs, w.coinbase, interrupt) {
 			return
 		}
 	}
 	if len(remoteTxs) > 0 {
 		txs := types.NewTransactionsByPriceAndNonce(w.current.signer, remoteTxs)
+		log.Info("TxLifeCycleTest: Committing Remote transactions")
 		if w.commitTransactions(txs, w.coinbase, interrupt) {
 			return
 		}
@@ -969,7 +971,7 @@ func (w *worker) commit(uncles []*types.Header, interval func(), update bool, st
 				feesWei.Add(feesWei, new(big.Int).Mul(new(big.Int).SetUint64(receipts[i].GasUsed), tx.GasPrice()))
 			}
 			feesEth := new(big.Float).Quo(new(big.Float).SetInt(feesWei), new(big.Float).SetInt(big.NewInt(params.Ether)))
-
+			log.Info("TxLifeCycleTest: Post transactions state commit")
 			log.Info("Commit new mining work", "number", block.Number(), "sealhash", w.engine.SealHash(block.Header()),
 				"uncles", len(uncles), "txs", w.current.tcount, "gas", block.GasUsed(), "fees", feesEth, "elapsed", common.PrettyDuration(time.Since(start)))
 

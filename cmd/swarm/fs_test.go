@@ -29,8 +29,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/panghalamit/go-ethereum/cmd/utils"
+	"github.com/panghalamit/go-ethereum/log"
 )
 
 type testFile struct {

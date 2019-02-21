@@ -24,14 +24,14 @@ import (
 	"math/big"
 	"reflect"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/accounts/usbwallet"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/internal/ethapi"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/panghalamit/go-ethereum/accounts"
+	"github.com/panghalamit/go-ethereum/accounts/keystore"
+	"github.com/panghalamit/go-ethereum/accounts/usbwallet"
+	"github.com/panghalamit/go-ethereum/common"
+	"github.com/panghalamit/go-ethereum/common/hexutil"
+	"github.com/panghalamit/go-ethereum/internal/ethapi"
+	"github.com/panghalamit/go-ethereum/log"
+	"github.com/panghalamit/go-ethereum/rlp"
 )
 
 const (

@@ -11,13 +11,13 @@ import (
 	"crypto/ecdsa"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/panghalamit/go-ethereum/core"
+	"github.com/panghalamit/go-ethereum/crypto"
+	"github.com/panghalamit/go-ethereum/eth"
+	"github.com/panghalamit/go-ethereum/ethdb"
+	"github.com/panghalamit/go-ethereum/light"
+	"github.com/panghalamit/go-ethereum/p2p"
+	"github.com/panghalamit/go-ethereum/p2p/enode"
 )
 
 func TestULCSyncWithOnePeer(t *testing.T) {

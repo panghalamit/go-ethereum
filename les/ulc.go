@@ -3,8 +3,8 @@ package les
 import (
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/panghalamit/go-ethereum/eth"
+	"github.com/panghalamit/go-ethereum/p2p/enode"
 )
 
 type ulc struct {

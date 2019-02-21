@@ -19,9 +19,9 @@ package protocols
 import (
 	"testing"
 
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/panghalamit/go-ethereum/p2p"
+	"github.com/panghalamit/go-ethereum/p2p/simulations/adapters"
+	"github.com/panghalamit/go-ethereum/rlp"
 )
 
 //dummy Balance implementation

@@ -29,12 +29,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p/simulations"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	"github.com/ethereum/go-ethereum/swarm/network"
-	"github.com/ethereum/go-ethereum/swarm/network/simulation"
+	"github.com/panghalamit/go-ethereum/log"
+	"github.com/panghalamit/go-ethereum/node"
+	"github.com/panghalamit/go-ethereum/p2p/simulations"
+	"github.com/panghalamit/go-ethereum/p2p/simulations/adapters"
+	"github.com/panghalamit/go-ethereum/swarm/network"
+	"github.com/panghalamit/go-ethereum/swarm/network/simulation"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
