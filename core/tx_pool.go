@@ -587,7 +587,7 @@ func (pool *TxPool) local() map[common.Address]types.Transactions {
 // rules and adheres to some heuristic limits of the local node (price and size).
 func (pool *TxPool) validateTx(tx *types.Transaction, local bool) error {
 
-	log.Info("TxLifeCycleTest: Checking validity of transaction (pool->validateTx)", "txHash", tx.Hash())
+	log.Info("TxLifeCycleTest: Checking validity of transaction (tx_pool.go->validateTx)", "txHash", tx.Hash())
 	// Heuristic limit, reject transactions over 32KB to prevent DOS attacks
 	if tx.Size() > 32*1024 {
 		return ErrOversizedData
@@ -640,7 +640,7 @@ func (pool *TxPool) validateTx(tx *types.Transaction, local bool) error {
 // the pool due to pricing constraints.
 func (pool *TxPool) add(tx *types.Transaction, local bool) (bool, error) {
 	// If the transaction is already known, discard it
-	log.Info("TxLifeCycleTest: Attempt to add transaction to pool(pool->add)", "txHash", tx.Hash())
+	log.Info("TxLifeCycleTest: Attempt to add transaction to pool(tx_pool.go->add(_,_))", "txHash", tx.Hash())
 	hash := tx.Hash()
 	if pool.all.Get(hash) != nil {
 		log.Trace("Discarding already known transaction", "hash", hash)
@@ -717,7 +717,7 @@ func (pool *TxPool) add(tx *types.Transaction, local bool) (bool, error) {
 // Note, this method assumes the pool lock is held!
 func (pool *TxPool) enqueueTx(hash common.Hash, tx *types.Transaction) (bool, error) {
 	// Try to insert the transaction into the future queue
-	log.Info("TxLifeCycleTest: Attempting to add tx to future queue (pool->enqueueTx)", "txHash", tx.Hash())
+	log.Info("TxLifeCycleTest: Attempting to add tx to future queue (tx_pool.go->enqueueTx)", "txHash", tx.Hash())
 	from, _ := types.Sender(pool.signer, tx) // already validated
 	if pool.queue[from] == nil {
 		pool.queue[from] = newTxList(false)
@@ -745,7 +745,7 @@ func (pool *TxPool) enqueueTx(hash common.Hash, tx *types.Transaction) (bool, er
 // deemed to have been sent from a local account.
 func (pool *TxPool) journalTx(from common.Address, tx *types.Transaction) {
 	// Only journal if it's enabled and the transaction is local
-	log.Info("TxLifeCycleTest: Attempting to add local tx to disk journal", "txHash", tx.Hash())
+	log.Info("TxLifeCycleTest: Attempting to add local tx to disk journal (tx_pool.go->journalTx)", "txHash", tx.Hash())
 	if pool.journal == nil || !pool.locals.contains(from) {
 		return
 	}
@@ -760,7 +760,7 @@ func (pool *TxPool) journalTx(from common.Address, tx *types.Transaction) {
 // Note, this method assumes the pool lock is held!
 func (pool *TxPool) promoteTx(addr common.Address, hash common.Hash, tx *types.Transaction) bool {
 	// Try to insert the transaction into the pending queue
-	log.Info("TxLifeCycleTest: Attempting to promote tx to pending list (processable) (pool->promoteTx)", "txHash", tx.Hash())
+	log.Info("TxLifeCycleTest: Attempting to promote tx to pending list (processable) (tx_pool.go->promoteTx)", "txHash", tx.Hash())
 	if pool.pending[addr] == nil {
 		pool.pending[addr] = newTxList(true)
 	}
@@ -798,7 +798,7 @@ func (pool *TxPool) promoteTx(addr common.Address, hash common.Hash, tx *types.T
 // the sender as a local one in the mean time, ensuring it goes around the local
 // pricing constraints.
 func (pool *TxPool) AddLocal(tx *types.Transaction) error {
-	log.Info("TxLifeCycleTest: pool->AddLocal", "txHash", tx.Hash())
+	log.Info("TxLifeCycleTest: enqueues a single local tx, (tx_pool.go->AddLocal)", "txHash", tx.Hash())
 	return pool.addTx(tx, !pool.config.NoLocals)
 }
 
@@ -806,7 +806,7 @@ func (pool *TxPool) AddLocal(tx *types.Transaction) error {
 // sender is not among the locally tracked ones, full pricing constraints will
 // apply.
 func (pool *TxPool) AddRemote(tx *types.Transaction) error {
-	log.Info("TxLifeCycleTest: pool->AddRemote", "txHash", tx.Hash())
+	log.Info("TxLifeCycleTest: enqueues a single remote tx, (tx_pool.go->AddRemote)", "txHash", tx.Hash())
 	return pool.addTx(tx, false)
 }
 
@@ -814,7 +814,7 @@ func (pool *TxPool) AddRemote(tx *types.Transaction) error {
 // marking the senders as a local ones in the mean time, ensuring they go around
 // the local pricing constraints.
 func (pool *TxPool) AddLocals(txs []*types.Transaction) []error {
-	log.Info("TxLifeCycleTest: pool->AddLocals")
+	log.Info("TxLifeCycleTest: enqueues a batch of local txs, (tx_pool.go->AddLocals)")
 	return pool.addTxs(txs, !pool.config.NoLocals)
 }
 
@@ -822,7 +822,7 @@ func (pool *TxPool) AddLocals(txs []*types.Transaction) []error {
 // If the senders are not among the locally tracked ones, full pricing constraints
 // will apply.
 func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
-	log.Info("TxLifeCycleTest: pool->AddRemotes")
+	log.Info("TxLifeCycleTest: enqueues a batch of remote txs, (tx_pool.go->AddRemotes)")
 	return pool.addTxs(txs, false)
 }
 
@@ -832,7 +832,7 @@ func (pool *TxPool) addTx(tx *types.Transaction, local bool) error {
 	defer pool.mu.Unlock()
 
 	// Try to inject the transaction and update any state
-	log.Info("TxLifeCycleTest: pool->addTx, attempting to inject a tx ")
+	log.Info("TxLifeCycleTest: try to inject a single tx, (tx_pool.go->addTx)")
 	replace, err := pool.add(tx, local)
 	if err != nil {
 		return err
@@ -849,7 +849,7 @@ func (pool *TxPool) addTx(tx *types.Transaction, local bool) error {
 func (pool *TxPool) addTxs(txs []*types.Transaction, local bool) []error {
 	pool.mu.Lock()
 	defer pool.mu.Unlock()
-	log.Info("TxLifeCycleTest: pool->addTxs, attempting to queue a batch of Txs")
+	log.Info("TxLifeCycleTest: try to inject a batch of Txs, (tx_pool.go->addTxs)")
 	return pool.addTxsLocked(txs, local)
 }
 
@@ -859,7 +859,7 @@ func (pool *TxPool) addTxsLocked(txs []*types.Transaction, local bool) []error {
 	// Add the batch of transactions, tracking the accepted ones
 	dirty := make(map[common.Address]struct{})
 	errs := make([]error, len(txs))
-	log.Info("TxLifeCycleTest: pool->addTxsLocked, attempting to queue a batch of Txs, assuming pool lock is held")
+	log.Info("TxLifeCycleTest: attempting to queue a batch of Txs, assuming pool lock is held, (tx_pool.go->addTxsLocked)")
 	for i, tx := range txs {
 		var replace bool
 		if replace, errs[i] = pool.add(tx, local); errs[i] == nil && !replace {
@@ -908,7 +908,7 @@ func (pool *TxPool) Get(hash common.Hash) *types.Transaction {
 // transactions back to the future queue.
 func (pool *TxPool) removeTx(hash common.Hash, outofbound bool) {
 	// Fetch the transaction we wish to delete
-	log.Info("TxLifeCycleTest: pool->removeTx, removes a single tx from queue")
+	log.Info("TxLifeCycleTest: removes a single tx from queue, (tx_pool.go->removeTx)")
 	tx := pool.all.Get(hash)
 	if tx == nil {
 		return
@@ -954,7 +954,7 @@ func (pool *TxPool) removeTx(hash common.Hash, outofbound bool) {
 func (pool *TxPool) promoteExecutables(accounts []common.Address) {
 	// Track the promoted transactions to broadcast them at once
 	var promoted []*types.Transaction
-	log.Info("TxLifeCycleTest: pool->promoteExecutables, promote tx from future queue if processable")
+	log.Info("TxLifeCycleTest: promote tx from future queue if processable, (tx_pool.go->promoteExecutables)")
 	// Gather all the accounts potentially needing updates
 	if accounts == nil {
 		accounts = make([]common.Address, 0, len(pool.queue))
@@ -1129,7 +1129,7 @@ func (pool *TxPool) promoteExecutables(accounts []common.Address) {
 // are moved back into the future queue.
 func (pool *TxPool) demoteUnexecutables() {
 	// Iterate over all accounts and demote any non-executable transactions
-	log.Info("TxLifeCycleTest: pool->demoteUnexecutables, demote tx from pending if unprocessable")
+	log.Info("TxLifeCycleTest: demote tx from pending if unprocessable, (tx_pool.go->demoteUnexecutables)")
 
 	for addr, list := range pool.pending {
 		nonce := pool.currentState.GetNonce(addr)

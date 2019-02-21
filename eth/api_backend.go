@@ -155,7 +155,7 @@ func (b *EthAPIBackend) SubscribeLogsEvent(ch chan<- []*types.Log) event.Subscri
 }
 
 func (b *EthAPIBackend) SendTx(ctx context.Context, signedTx *types.Transaction) error {
-	log.Info("TxLifeCycleTest: Local Tx received from the client", "txHash", signedTx.Hash().Hex())
+	log.Info("TxLifeCycleTest: Local Tx received from the client (eth->api_backend.go->SendTx)", "txHash", signedTx.Hash().Hex())
 	return b.eth.txPool.AddLocal(signedTx)
 }
 

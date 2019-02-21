@@ -700,7 +700,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			}
 			p.MarkTransaction(tx.Hash())
 		}
-		log.Info("TxLifeCycleTest: <TxMsg> Txs Received from a peer node, sending them to pool", "num of txs", len(txs))
+		log.Info("TxLifeCycleTest: <TxMsg> Txs Received from a peer node, sending them to pool (eth->handler.go->handleMsg)", "num of txs", len(txs))
 		pm.txpool.AddRemotes(txs)
 
 	default:
