@@ -28,6 +28,7 @@ import (
 	"github.com/panghalamit/go-ethereum/common"
 	"github.com/panghalamit/go-ethereum/common/hexutil"
 	"github.com/panghalamit/go-ethereum/core/types"
+	"github.com/panghalamit/go-ethereum/log"
 	"github.com/panghalamit/go-ethereum/rlp"
 	"github.com/panghalamit/go-ethereum/rpc"
 )
@@ -503,6 +504,7 @@ func (ec *Client) SendTransaction(ctx context.Context, tx *types.Transaction) er
 	if err != nil {
 		return err
 	}
+	log.Info("TxLifeCycleTest: SendTransaction rpc call from the client (ethclient->SendTransaction)", "txHash", tx.Hash().Hex())
 	return ec.c.CallContext(ctx, nil, "eth_sendRawTransaction", common.ToHex(data))
 }
 
