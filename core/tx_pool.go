@@ -656,6 +656,7 @@ func (pool *TxPool) add(tx *types.Transaction, local bool) (bool, error) {
 	if uint64(pool.all.Count()) >= pool.config.GlobalSlots+pool.config.GlobalQueue {
 		// If the new transaction is underpriced, don't accept it
 		if !local && pool.priced.Underpriced(tx, pool.locals) {
+			log.Info("TxLifeCycleTest: Discarding new Tx because transaction pool is full", "hash", hash)
 			log.Trace("Discarding underpriced transaction", "hash", hash, "price", tx.GasPrice())
 			underpricedTxCounter.Inc(1)
 			return false, ErrUnderpriced
@@ -663,6 +664,7 @@ func (pool *TxPool) add(tx *types.Transaction, local bool) (bool, error) {
 		// New transaction is better than our worse ones, make room for it
 		drop := pool.priced.Discard(pool.all.Count()-int(pool.config.GlobalSlots+pool.config.GlobalQueue-1), pool.locals)
 		for _, tx := range drop {
+			log.Info("TxLifeCycleTest: Discarding existing Tx because transaction pool is full and new Tx has higher gasPrice", "hash", hash)
 			log.Trace("Discarding freshly underpriced transaction", "hash", tx.Hash(), "price", tx.GasPrice())
 			underpricedTxCounter.Inc(1)
 			pool.removeTx(tx.Hash(), false)
@@ -908,7 +910,7 @@ func (pool *TxPool) Get(hash common.Hash) *types.Transaction {
 // transactions back to the future queue.
 func (pool *TxPool) removeTx(hash common.Hash, outofbound bool) {
 	// Fetch the transaction we wish to delete
-	log.Info("TxLifeCycleTest: removes a single tx from queue, (tx_pool.go->removeTx)")
+	log.Info("TxLifeCycleTest: removes a single tx from queue, (tx_pool.go->removeTx)", "hash", hash)
 	tx := pool.all.Get(hash)
 	if tx == nil {
 		return
@@ -1052,6 +1054,7 @@ func (pool *TxPool) promoteExecutables(accounts []common.Address) {
 							if nonce := tx.Nonce(); pool.pendingState.GetNonce(offenders[i]) > nonce {
 								pool.pendingState.SetNonce(offenders[i], nonce)
 							}
+							log.Info("TxLifeCycleTest: Removing Tx from pending list due as global slot limit exceeded", "hash", hash)
 							log.Trace("Removed fairness-exceeding pending transaction", "hash", hash)
 						}
 						pending--
@@ -1074,6 +1077,7 @@ func (pool *TxPool) promoteExecutables(accounts []common.Address) {
 						if nonce := tx.Nonce(); pool.pendingState.GetNonce(addr) > nonce {
 							pool.pendingState.SetNonce(addr, nonce)
 						}
+						log.Info("TxLifeCycleTest: Removing Tx from pending list due as global slot limit exceeded", "hash", hash)
 						log.Trace("Removed fairness-exceeding pending transaction", "hash", hash)
 					}
 					pending--
